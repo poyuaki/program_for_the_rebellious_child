@@ -13,3 +13,7 @@
 ## 参考にしていただいたプログラム
 
 [【Python】OpenCVを使ってマックの内蔵カメラを起動して画面に人の顔が認識されたら白枠を表示させる方法](https://gist.github.com/kurozumi/04a75695dc32c46586be0d69e6a8243f)
+
+## 必要なライブラリ
+
+- cv2(openCV)
