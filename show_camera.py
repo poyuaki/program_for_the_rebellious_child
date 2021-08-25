@@ -19,6 +19,8 @@ if __name__ == "__main__":
   dt1 = datetime.datetime.now()
   update_time = datetime.datetime.now()
   photo_id = 0
+  is_face_flag = False
+  judge_time = datetime.datetime.now()
   if len(user_setting_list["img_path"]) != 0 and user_setting_list["img_path"] != "." and user_setting_list["img_path"][len(user_setting_list["img_path"])-1:] != "/":
     try:
       shutil.rmtree(user_setting_list["img_path"])
@@ -53,12 +55,18 @@ if __name__ == "__main__":
 
     # 顔が見つかったらcv2.rectangleで顔に白枠を表示する
     if len(facerect) > 0:
+      if not is_face_flag:
+        judge_time = datetime.datetime.now() # ジャッジする時間を計測
+        is_face_flag = True # 顔認識のジャッジを開始
       for rect in facerect:
         img = cv2.rectangle(frame, tuple(rect[0:2]), tuple(rect[0:2]+rect[2:4]), color, thickness=2)
-        if (datetime.datetime.now() - dt1).seconds >= user_setting_list["interval_make_img"]:
+      if (datetime.datetime.now() - dt1).seconds >= user_setting_list["interval_make_img"]: # もしも切り取り間隔なら
+        if (update_time - judge_time).seconds >= 5 and is_face_flag: # 顔認識のジャッジが成功すれば
           cv2.imwrite('{}/result_{}.png'.format(user_setting_list["img_path"],photo_id), img)
           photo_id += 1
           dt1 = datetime.datetime.now()
+    else:
+      is_face_flag = False # 顔認識のジャッジの初期化
     # 表示
     if user_setting_list["is_show_movie"]:
       cv2.imshow("frame test", frame)
